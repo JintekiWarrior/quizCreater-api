@@ -56,7 +56,7 @@ router.get('/quizzes', (req, res, next) => {
 // the user by their id. After we will set up a `handle404` in case no id
 // is found. Then we will use the requireOwnership() method to prove that
 // the owner making the update is the one that is supposed to be. Lastly
-// we will return the updated quiz getting storing the new data added.
+// we will return the updated quiz storing the new data added.
 //
 // Update PATCH request
 router.patch('/quizzes/:id', requireToken, (req, res, next) => {
