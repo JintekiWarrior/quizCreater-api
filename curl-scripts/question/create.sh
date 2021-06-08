@@ -9,7 +9,8 @@ curl "${API}${URL_PATH}" \
     "question": {
       "question": "'"${QUESTION}"'",
       "rightAnswer": "'"${RANSWER}"'",
-      "wrongAnswer": ["'"${WANSWER}"'", "'"${WANSWER2}"'"],
+      "wrongAnswer": "'"${WANSWER}"'",
+      "wrongAnswer2": "'"${WANSWER2}"'",
       "quizId": "'"${QUIZ_ID}"'"
     }
   }'

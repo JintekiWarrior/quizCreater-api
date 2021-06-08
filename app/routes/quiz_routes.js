@@ -51,6 +51,15 @@ router.get('/quizzes', (req, res, next) => {
     .catch(next)
 })
 
+// Show GET request
+router.get('/quizzes/:id', requireToken, (req, res, next) => {
+  Quiz.findById(req.params.id)
+    .then(handle404)
+    .then(quiz => requireOwnership(req, quiz))
+    .then(quiz => res.json(quiz))
+    .catch(next)
+})
+
 // Allow the user to update a quiz if they are the ones who own it.
 // We will first delete the incoming owner on the data, then we will find
 // the user by their id. After we will set up a `handle404` in case no id

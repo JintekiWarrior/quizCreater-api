@@ -16,11 +16,14 @@ const questionSchema = new Schema({
     type: String,
     required: true
   },
-  wrongAnswer: [{
+  wrongAnswer: {
     type: String,
-    default: undefined,
     required: true
-  }]
+  },
+  wrongAnswer2: {
+    type: String,
+    required: true
+  }
 }, {
   timestamps: true
 })
