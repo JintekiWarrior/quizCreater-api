@@ -2,11 +2,22 @@
 const express = require('express')
 const mongoose = require('mongoose')
 
+// Require any custom error handlers.
+// `handle404` error occurs if the client passes an ID that isn't in the database.
+// `requireOwnership` will be defined in any route that uses `requireToken`
+const { requireOwnership } = require('./../../lib/custom_errors.js')
+
+// require passport for authentication purposes
+const passport = require('passport')
+
 // require the quiz model
 const Quiz = require('./../models/quiz.js')
 
 // create router middleware
 const router = express.Router()
+
+// require token
+const requireToken = passport.authenticate('bearer', { session: false })
 
 // Create a question in the quiz. First store the request data in a variable.
 // Then get the id for the quiz bieng given questions. Use the findById method.
@@ -14,11 +25,12 @@ const router = express.Router()
 // mongoose model. Print the status and changes after.
 //
 // create POST request
-router.post('/questions', (req, res, next) => {
+router.post('/questions', requireToken, (req, res, next) => {
   const questionData = req.body.question
   const quizId = questionData.quizId
   Quiz.findById(quizId)
     .then(quiz => {
+      requireOwnership(req, quiz)
       quiz.questions.push(questionData)
       return quiz.save()
     })
@@ -32,31 +44,31 @@ router.post('/questions', (req, res, next) => {
 // the remove method. Then save the deletion, and send a 204 status.
 //
 // Destroy DELETE request
-router.delete('/questions/:id', (req, res, next) => {
-  const questionId = req.params.id
-  const quizId = req.body.question.quizId
-  Quiz.findById(quizId)
-    .then(quiz => {
-      quiz.questions.id(questionId).remove()
-      return quiz.save()
-    })
-    .then(() => res.sendStatus(204))
-    .catch(next)
-})
+// router.delete('/questions/:id', (req, res, next) => {
+//   const questionId = req.params.id
+//   const quizId = req.body.question.quizId
+//   Quiz.findById(quizId)
+//     .then(quiz => {
+//       quiz.questions.id(questionId).remove()
+//       return quiz.save()
+//     })
+//     .then(() => res.sendStatus(204))
+//     .catch(next)
+// })
 
 // Update PATCH request
-router.patch('/questions/:id', (req, res, next) => {
-  const questionId = req.params.id
-  const quizId = req.body.question.quizId
-  const questionData = req.body.question
-  Quiz.findById(quizId)
-    .then(quiz => {
-      const question = quiz.questions.id(questionId)
-      question.set(questionData)
-      return quiz.save()
-    })
-    .then(() => res.sendStatus(204))
-    .catch(next)
-})
+// router.patch('/questions/:id', (req, res, next) => {
+//   const questionId = req.params.id
+//   const quizId = req.body.question.quizId
+//   const questionData = req.body.question
+//   Quiz.findById(quizId)
+//     .then(quiz => {
+//       const question = quiz.questions.id(questionId)
+//       question.set(questionData)
+//       return quiz.save()
+//     })
+//     .then(() => res.sendStatus(204))
+//     .catch(next)
+// })
 
 module.exports = router
